@@ -1,14 +1,6 @@
 import React from 'react';
-import Resource from '../Resource';
+import { fetchSlowResource } from '../api';
 import withResources from '../withResources';
-
-function fetchSlowResource() {
-  const task = new Promise(resolve => {
-    setTimeout(() => resolve('Hello, slow screen!'), 3000);
-  });
-
-  return new Resource(task);
-}
 
 SlowScreen.fetchResources = () => {
   return {

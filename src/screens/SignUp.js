@@ -1,29 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Navigate } from 'react-router';
-import Resource from '../Resource';
-
-function timeout(ms) {
-  return new Promise(resolve => {
-    setTimeout(() => resolve(), ms);
-  });
-}
-
-function attemptLogin() {
-  const task = timeout(5000).then(() => {
-    return {
-      error: 'username in use'
-    };
-  });
-
-  return new Resource(task);
-}
+import { attemptLogin } from '../api';
 
 export default function SignUp({ nextLocation }) {
   const [loginResource, setLoginResource] = React.useState();
-  // By not specifying a timeout duration, this component will never fully suspend.
-  // This is desirable for forms, but isn't desirable when transitioning between routes, generally.
-  const [startTransition, isPending] = React.useTransition();
+  const [startTransition, isPending] = React.useTransition({
+    // We never want this component to fully suspend.
+    timeoutMs: Infinity
+  });
+
   const onSubmit = event => {
     event.preventDefault();
     startTransition(() => {
