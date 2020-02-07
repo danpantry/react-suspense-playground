@@ -4,7 +4,7 @@ import withResources from '../withResources';
 
 function fetchSlowResource() {
   const task = new Promise(resolve => {
-    setTimeout(() => resolve('Hello, slow screen!'), 1000);
+    setTimeout(() => resolve('Hello, slow screen!'), 3000);
   });
 
   return new Resource(task);
