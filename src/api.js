@@ -7,13 +7,27 @@ function timeout(ms) {
   });
 }
 
-const todos = new Map();
+function encodeTodos(todos) {
+  return todos
+    .map(todo => [todo.id, todo.description].map(btoa).join(':'))
+    .join(';');
+}
+
+function decodeTodos(str) {
+  str = str ?? '';
+  return str.split(';').reduce((acc, next) => {
+    if (next === '') {
+      return acc;
+    }
+
+    const [id, description] = next.split(':').map(atob);
+    return [...acc, { id, description }];
+  }, []);
+}
+
 function listTodos() {
   return timeout(1000).then(() => {
-    const entries = Array.from(todos.entries());
-    return entries.map(([key, value]) => {
-      return { id: key, description: value };
-    });
+    return decodeTodos(localStorage.getItem('todos'));
   });
 }
 
@@ -21,12 +35,14 @@ export function fetchTodos() {
   return new Resource(listTodos());
 }
 
-function createTodo(todo) {
+function createTodo(description) {
   return timeout(1000).then(() => {
     // A real implementation would call a remote API.
+    // This example is pretty poor, because it requires us to serialize and deserialize the entire todo list just to add one.
     const id = uuid();
-    todos.set(id, todo);
-    return { id, todo };
+    const todos = decodeTodos(localStorage.getItem('todos'));
+    const enc = encodeTodos([...todos, { id, description }]);
+    localStorage.setItem('todos', enc);
   });
 }
 
