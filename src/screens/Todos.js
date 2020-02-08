@@ -1,5 +1,6 @@
 import React from 'react';
-import { fetchTodos, createAndRefreshTodos } from '../api';
+import uuid from 'uuid';
+import { createAndRefreshTodos, fetchTodos } from '../api';
 import withResources from '../withResources';
 
 function TodosForm({ onTodoAdded, children }) {
@@ -31,29 +32,45 @@ Todos.fetchResources = () => {
   };
 };
 
+// This is used to display pending todos and still have them sorted correctly.
+function createPendingTodo(description) {
+  return { id: uuid(), description };
+}
+
 function Todos({ initialResource }) {
-  // TODO: Mark rows as pending.
   const [startTransition, isPending] = React.useTransition({
-    timeoutMs: Infinity
+    timeoutMs: 3000
   });
 
   const [todosResource, setTodoResource] = React.useState(initialResource);
+  const [pendingTodos, setPendingTodos] = React.useState([]);
 
   const onTodoAdded = todo => {
+    // In this example we use arrays. If a user had a lot of pending todos this
+    // might become a problem and a Set might be a better choice.
+    const pending = createPendingTodo(todo);
+    setPendingTodos(todos => [...todos, pending]);
     startTransition(() => {
       setTodoResource(createAndRefreshTodos(todo));
+      setPendingTodos(todos => todos.filter(t => t.id !== pending.id));
     });
   };
 
   const todos = todosResource.read();
+  const haveTodos = todos.length > 0 || pendingTodos.length > 0;
 
   return (
     <div>
-      {todos.length === 0 && <h1>You have nothing to do.</h1>}
-      {todos.length > 0 && (
+      {!haveTodos && <h1>You have nothing to do.</h1>}
+      {haveTodos && (
         <ol>
           {todos.map(todo => (
             <li key={todo.id}>{todo.description}</li>
+          ))}
+          {pendingTodos.map(todo => (
+            <li key={todo.id}>
+              {todo.description} <span>Pending!</span>
+            </li>
           ))}
         </ol>
       )}

@@ -23,6 +23,7 @@ export function fetchTodos() {
 
 function createTodo(todo) {
   return timeout(1000).then(() => {
+    // A real implementation would call a remote API.
     const id = uuid();
     todos.set(id, todo);
     return { id, todo };
