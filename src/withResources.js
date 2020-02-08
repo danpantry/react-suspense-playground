@@ -1,5 +1,11 @@
 import React from 'react';
 
+/**
+ * A HOC that will fetch resources in the static method `fetchResources()` on the given component and provides a Suspense fallback.
+ * This is useful for top-level Route components.
+ *
+ * @param {React.ComponentType<P>} Component The React component to wrap.
+ */
 export default function withResources(Component) {
   return () => {
     const initialProps = React.useMemo(
