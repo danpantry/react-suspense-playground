@@ -7,7 +7,7 @@ import React from 'react';
  * @param {React.ComponentType<P>} Component The React component to wrap.
  */
 export default function withResources(Component) {
-  return () => {
+  const WithResources = () => {
     const initialProps = React.useMemo(
       () => ('fetchResources' in Component ? Component.fetchResources() : {}),
       []
@@ -19,4 +19,9 @@ export default function withResources(Component) {
       </React.Suspense>
     );
   };
+
+  const displayName = Component.displayName ?? Component.name;
+  WithResources.displayName = `WithResources(${displayName})`;
+
+  return WithResources;
 }
