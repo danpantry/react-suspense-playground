@@ -1,0 +1,16 @@
+.App {
+  margin: 20px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav a {
+  padding: 2px;
+}
+
+.nav a:global(.active) {
+  font-weight: bolder;
+}

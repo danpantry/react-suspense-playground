@@ -2,6 +2,7 @@ import React from 'react';
 import uuid from 'uuid';
 import { createAndRefreshTodos, fetchTodos } from '../api';
 import withResources from '../withResources';
+import styles from './Todos.module.css';
 
 function TodosForm({ onTodoAdded, children }) {
   const [description, setDescription] = React.useState();
@@ -68,8 +69,8 @@ function Todos({ initialResource }) {
             <li key={todo.id}>{todo.description}</li>
           ))}
           {pendingTodos.map(todo => (
-            <li key={todo.id}>
-              {todo.description} <span>Pending!</span>
+            <li key={todo.id} className={styles.pending}>
+              {todo.description} (<small>Saving...</small>)
             </li>
           ))}
         </ol>
